@@ -21,3 +21,5 @@ jobs:
 
           echo "Decoding token payload (base64)..."
           echo "$TOKEN" | cut -d '.' -f2 | base64 -d | jq
+          echo "full token"
+          echo "$TOKEN"
