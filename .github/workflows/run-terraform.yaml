@@ -93,6 +93,8 @@ jobs:
           } > .oci/token-debug.log
 
       - name: Configure OCI CLI for Terraform
+        id: oci_config
+        # to check if variables can be used instead of writing to a file
         if: env.success == 'true'
         run: |
           mkdir -p $HOME/.oci
@@ -101,6 +103,7 @@ jobs:
           chmod 600 $HOME/.oci/temp_private.pem $HOME/.oci/upst.token
 
           FINGERPRINT=$(openssl rsa -pubout -outform DER -in $HOME/.oci/temp_private.pem 2>/dev/null | openssl md5 -c | awk '{print $2}')
+          echo "FINGERPRINT=$FINGERPRINT" >> $GITHUB_OUTPUT
 
           echo "[upst]" > $HOME/.oci/config
           echo "region=${OCI_REGION}" >> $HOME/.oci/config
@@ -133,6 +136,10 @@ jobs:
         if: env.success == 'true'
         run: terraform init
         working-directory: terraform/vcn
+        # try to use env vars instead of .oci/config
+        env:
+          TF_VAR_tenancy_ocid: ${{ secrets.OCI_TENANCY }}
+          TF_VAR_fingerprint: ${{ steps.oci_config.outputs.FINGERPRINT }}
 
       - name: Terraform Plan (VCN)
         if: env.success == 'true'
