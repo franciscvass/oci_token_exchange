@@ -12,14 +12,43 @@ jobs:
   get-oidc-token:
     runs-on: ubuntu-latest
     steps:
-      - name: Request and Decode OIDC Token
-        shell: bash
+      - name: Generate RSA Key Pair
         run: |
-          echo "Requesting OIDC token..."
-          TOKEN=$(curl -sLS "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=https://oraclecloud.com/" \
-            -H "Authorization: Bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" | jq -r '.value')
+          mkdir -p .oci
+          openssl genrsa -out .oci/temp_private.pem 2048
+          openssl rsa -in .oci/temp_private.pem -pubout -out .oci/temp_public.pem
+          chmod 600 .oci/temp_private.pem .oci/temp_public.pem
 
-          echo "Decoding token payload (base64)..."
-          echo "$TOKEN" | cut -d '.' -f2 | base64 -d | jq
-          echo "full token"
-          echo "$TOKEN"
+      - name: Convert Private Key to Single Line (No Headers)
+        id: privkey
+        run: |
+          awk '/BEGIN PRIVATE KEY/ {skip=1; next} /END PRIVATE KEY/ {skip=0; next} skip {gsub(/\r/, ""); printf "%s", $0;}' .oci/temp_private.pem > .oci/private_key.one_line.pem
+
+      - name: Convert Public Key (No Headers)
+        id: pubkey
+        run: |
+          awk '/BEGIN PUBLIC KEY/ {skip=1; next} /END PUBLIC KEY/ {skip=0; next} skip {gsub(/\r/, ""); printf "%s", $0;}' .oci/temp_public.pem > .oci/public_key.one_line.pem
+          PUBKEY=$(cat .oci/public_key.one_line.pem)
+          echo "pubkey=$PUBKEY" >> $GITHUB_OUTPUT
+
+      - name: Fetch GitHub OIDC Token
+        id: jwt
+        run: |
+          curl -sSL -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${CLIENT_ID}" > id-token.json
+
+          JWT=$(jq -r '.value' id-token.json)
+          echo "$JWT" > .oci/id-token.jwt
+          echo "jwt=$JWT" >> $GITHUB_OUTPUT
+
+      - name: Upload Debug Files (Always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oci-upst-debug
+          path: |
+            .oci/id-token.jwt
+            .oci/public_key.one_line.pem
+            .oci/temp_public.pem
+            .oci/temp_private.pem
+            
