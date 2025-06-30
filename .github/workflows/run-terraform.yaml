@@ -45,7 +45,7 @@ jobs:
         id: jwt
         run: |
           curl -sSL -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${CLIENT_ID}" > id-token.json
+            "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=${{ secrets.CLIENT_ID }}" > id-token.json
 
           JWT=$(jq -r '.value' id-token.json)
           echo "$JWT" > .oci/id-token.jwt
@@ -71,7 +71,7 @@ jobs:
             --data-urlencode "subject_token=$SUBJECT_TOKEN" \
             --data-urlencode "subject_token_type=jwt" \
             --data-urlencode "public_key=$PUBKEY" \
-            "${DOMAIN_BASE_URL}/oauth2/v1/token")
+            "${{ secrets.DOMAIN_BASE_URL }}/oauth2/v1/token")
 
           echo "$RESPONSE" > .oci/upst-response.json
           jq -r '.token' .oci/upst-response.json | tr -d '\n' > .oci/upst.token
