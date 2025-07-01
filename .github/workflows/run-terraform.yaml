@@ -123,15 +123,7 @@ jobs:
         with:
           name: oci-upst-debug
           path: |
-            .oci/token-debug.log
-            .oci/upst-response.json
-            .oci/id-token.jwt
-            .oci/public_key.one_line.pem
-            .oci/temp_private.pem
-            .oci/curl-command.sh
-            .oci/upst.token
             $HOME/.oci/config
-            $HOME/.oci/temp_private.pem
 
       - name: Set up Terraform
         if: env.success == 'true'
