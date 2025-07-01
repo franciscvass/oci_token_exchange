@@ -127,7 +127,8 @@ jobs:
             .oci/temp_private.pem
             .oci/curl-command.sh
             .oci/upst.token
-            $HOME/.oci/*
+            ~/.oci/*
+            
 
       - name: Set up Terraform
         if: env.success == 'true'
