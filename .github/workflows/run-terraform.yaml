@@ -161,4 +161,9 @@ jobs:
           TF_VAR_fingerprint: ${{ steps.oci_config.outputs.FINGERPRINT }}
         run: terraform apply -auto-approve
         working-directory: terraform/vcn
+
+      - name: list OCI
+        run: ls -l $HOME/.oci/*
+        
+      
         
