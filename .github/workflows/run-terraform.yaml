@@ -110,6 +110,7 @@ jobs:
           echo "FINGERPRINT=$FINGERPRINT" >> $GITHUB_OUTPUT
 
           echo "[upst]" > $HOME/.oci/config
+          echo "user=${{ secrets.USER_OCID }}" >> $HOME/.oci/config
           echo "region=${OCI_REGION}" >> $HOME/.oci/config
           echo "tenancy=${OCI_TENANCY}" >> $HOME/.oci/config
           echo "fingerprint=${FINGERPRINT}" >> $HOME/.oci/config
