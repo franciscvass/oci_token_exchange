@@ -1,8 +1,18 @@
+terraform {  
+  backend "oci" {
+    bucket = "tfstate_bucket"
+    key = "tf_demo_oci_backend.tfstate"
+    namespace = "idjuatm1d4mr"
+    config_file_profile = "DEFAULT"
+    auth = "SecurityToken"
+    region = "eu-frankfurt-1"    
+  }
+}
+
 provider "oci" {
   region               = var.region
-  tenancy_ocid         = var.tenancy_ocid
-  auth                 = "securitytoken"
-  config_file_profile  = "upst"
+  auth                 = "SecurityToken"
+  config_file_profile  = "DEFAULT"
 }
 
 resource "oci_core_virtual_network" "fvass_vcn" {
