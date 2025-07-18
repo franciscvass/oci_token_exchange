@@ -1,5 +1,5 @@
-region           = "us-ashburn-1"
-tenancy_ocid     = "ocid1.tenancy.oc1..aaaaaaaakxcj247rl2tyoc6bsmexmcnku6x6ze4p55lqfobmww2rnrjbksiq"
-compartment_ocid = "ocid1.compartment.oc1..aaaaaaaatsew3msijirazpzqlgfnxhk6ozgv4zngo7zqjgi4uqbeualbfltq"
+region           = "eu-frankfurt-1"
+tenancy_ocid     = "ocid1.tenancy.oc1..aaaaaaaaz3zvzfb4afndqhyljo75yoat5azx6yw5hppwxqv3felvg3flex4q"
+compartment_ocid = "ocid1.compartment.oc1..aaaaaaaars7ft6qwfjeft6c2yo35copu7plbgvjyzooqcgqqb2l2negsww4q"
 vcn_display_name = "fvass_vcn"
 vcn_cidr_block   = "10.10.0.0/16"
